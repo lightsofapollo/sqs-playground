@@ -1,6 +1,7 @@
 import { SQS, SNS } from 'aws-sdk-promise';
 import os from 'os';
 import { createHash } from 'crypto';
+import math from 'mathjs';
 
 const host = new Buffer('testing-sqs-' + os.hostname()).toString('base64');
 
@@ -24,7 +25,7 @@ async function sendMessages(sns, topicArn) {
 async function getFromQueue(sqs, url) {
   console.time('get')
   let pendingMessages = MESSAGES;
-
+  let times = [];
   while(pendingMessages > 0) {
     let fetch = await sqs.receiveMessage({
       QueueUrl: url,
@@ -45,10 +46,14 @@ async function getFromQueue(sqs, url) {
       }).promise());
 
       let body = JSON.parse(new Buffer(message.Body, 'base64').toString());
-      console.log('took %s seconds (%d left)', (Date.now() - body.now) / 1000, pendingMessages);
+      let time = Date.now() - body.now;
+      times.push(time);
+      console.log('Got response %d seconds (%d left)', time/1000, pendingMessages);
     }
   }
   console.timeEnd('get');
+  console.log('get median: %d seconds', math.median(times)/1000);
+
 }
 
 async function getOrCreateQueue(sqs) {
