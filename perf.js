@@ -45,7 +45,12 @@ async function getFromQueue(sqs, url) {
         ReceiptHandle: message.ReceiptHandle
       }).promise());
 
-      let body = JSON.parse(new Buffer(message.Body, 'base64').toString());
+      let body;
+      try {
+        body = JSON.parse(new Buffer(message.Body, 'base64').toString());
+      } catch(e) {
+        continue
+      }
       let time = Date.now() - body.now;
       times.push(time);
       console.log('Got response %d seconds (%d left)', time/1000, pendingMessages);
