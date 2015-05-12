@@ -5,7 +5,7 @@ import math from 'mathjs';
 
 const host = new Buffer('testing-sqs2-' + os.hostname()).toString('base64');
 
-const MESSAGES = 1;
+const MESSAGES = 2000;
 const TOPIC = 'sqs-to-sns-testing-jlal';
 
 async function sendMessages(sns, topicArn) {
