@@ -3,9 +3,9 @@ import os from 'os';
 import { createHash } from 'crypto';
 import math from 'mathjs';
 
-const host = new Buffer('testing-sqs-' + os.hostname()).toString('base64');
+const host = new Buffer('testing-sqs2-' + os.hostname()).toString('base64');
 
-const MESSAGES = 2000;
+const MESSAGES = 1;
 const TOPIC = 'sqs-to-sns-testing-jlal';
 
 async function sendMessages(sns, topicArn) {
@@ -45,12 +45,8 @@ async function getFromQueue(sqs, url) {
         ReceiptHandle: message.ReceiptHandle
       }).promise());
 
-      let body;
-      try {
-        body = JSON.parse(new Buffer(message.Body, 'base64').toString());
-      } catch(e) {
-        continue
-      }
+      let body = JSON.parse(message.Body);
+      body = JSON.parse(new Buffer(body.Message, 'base64').toString());
       let time = Date.now() - body.now;
       times.push(time);
       console.log('Got response %d seconds (%d left)', time/1000, pendingMessages);
