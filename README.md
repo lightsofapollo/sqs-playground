@@ -23,3 +23,6 @@ Taken over 2k messages.
 | same region | 0.33s |
 | us-east-1 | 0.757s |
 | my laptop | 0.541s |
+
+*Note that the round trip _includes_ the time to send the message simulating the use case of
+parallel sender/recievers (YMMV).
